@@ -2,7 +2,14 @@
 
 ## Company
 
-Formplus (https://www.formpl.us): one-line summary to fill in after research, with a cited source.
+Formplus (https://www.formpl.us): self-serve online and offline (beta) form builder for surveys, registrations, applications, payments and orders. Its pitch: "Let forms do the work" (https://www.formpl.us, accessed 2026-11-13). Freemium, $0 to $85 a month plus Enterprise (https://www.formpl.us/pricing, accessed 2026-11-13). Started in Lagos, Nigeria, at CcHub (https://9jagistland.blogspot.com/2018/11/the-formplus-story-from-cchub-to.html, accessed 2026-11-13). Legal entity Formplus Inc, Delaware (https://www.formpl.us/terms-and-privacy, accessed 2026-11-13). Main buyers in its case studies: schools, nonprofits, small service businesses and field reporting teams (https://www.formpl.us/case-studies, accessed 2026-11-13).
+
+Key files:
+
+- `context/icp/icp.md`: ICP in five layers, six segments, not-a-fit list.
+- `context/icp/personas.md`: champion, economic buyer and influencer personas.
+- `context/icp/signal-matrix.md`: segment x persona angles, scored buying signals, build order and workflow tracker (v1, work in progress).
+- `context/docs/research/`: `company.md`, `customers.md`, `competitors.md`, `market.md`, `signals.md`, `voice.md`.
 
 ## How this folder works
 
