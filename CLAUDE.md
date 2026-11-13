@@ -9,6 +9,7 @@ Key files:
 - `context/icp/icp.md`: ICP in five layers, six segments, not-a-fit list.
 - `context/icp/personas.md`: champion, economic buyer and influencer personas.
 - `context/icp/signal-matrix.md`: segment x persona angles, scored buying signals, build order and workflow tracker (v1, work in progress).
+- `context/docs/gtm-system.md`: outbound GTM system design, step by step with decisions (v1).
 - `context/docs/research/`: `company.md`, `customers.md`, `competitors.md`, `market.md`, `signals.md`, `voice.md`.
 
 ## How this folder works
