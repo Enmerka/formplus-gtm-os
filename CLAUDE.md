@@ -16,11 +16,17 @@ Key files (everything written for Formplus so far; starter-kit files are covered
 - `context/icp/personas.md`: champion, economic buyer and influencer personas.
 - `context/icp/signal-matrix.md`: segment x persona angles, scored buying signals, build order and workflow tracker (v1, work in progress).
 - `context/docs/gtm-system.md`: outbound GTM system design, step by step with decisions (v1, not built).
+- `context/docs/case-studies.md`: every customer story: size, industry, problem, result, quote, source.
+- `context/positioning/value-proposition.md`: job, pain, gain and proof per persona.
+- `context/positioning/positioning.md`: category, target, alternatives, unique value, positioning statement.
+- `context/positioning/competitors.md`: competitor table, where Formplus wins and loses, how to respond.
+- `context/messaging/messaging.md`: core message, four pillars with proof, persona angles, words to use and avoid.
+- `context/brand-kit/brand.md`: tone of voice and key phrases from Formplus's own copy.
 - `output/campaigns/workflow-candidates.md`: three candidate workflows; W1 recommended.
 - `output/campaigns/google-forms-documents-payments/workflow-spec.md`: W1 spec, STRUCTURE-APPROVED 2026-11-13, copy pending.
 - `weekly-priorities/2026-W46.md`, `work-log/2026-W46.md`: this week's priorities and change log.
 
-Not created yet: `context/messaging/facts.md` (needed by `/campaign-copy`), anything in `context/positioning/`, `context/brand-kit/`, `knowledge-base/learnings/` and `meetings/`.
+Not created yet: `context/messaging/facts.md` (needed by `/campaign-copy`), brand visuals (logo, colours, fonts), anything in `knowledge-base/learnings/` and `meetings/`.
 
 ## How this folder works
 
