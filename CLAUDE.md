@@ -21,13 +21,14 @@ Key files (everything written for Formplus so far; starter-kit files are covered
 - `context/positioning/positioning.md`: category, target, alternatives, unique value, positioning statement.
 - `context/positioning/competitors.md`: competitor table, where Formplus wins and loses, how to respond.
 - `context/messaging/messaging.md`: core message, four pillars with proof, persona angles, words to use and avoid.
+- `context/messaging/facts.md`: authorized copy facts (sender placeholders, value prop, claims, 5 named customers, bans). DRAFT, pending approval.
 - `context/brand-kit/brand.md`: tone of voice and key phrases from Formplus's own copy.
 - `output/campaigns/campaign-strategy.md`: 19 ranked campaign ideas with mother intent, tier, volume and difficulty.
 - `output/campaigns/workflow-candidates.md`: three candidate workflows; W1 recommended.
 - `output/campaigns/google-forms-documents-payments/workflow-spec.md`: W1 spec, STRUCTURE-APPROVED 2026-11-13, copy pending.
 - `weekly-priorities/2026-W46.md`, `work-log/2026-W46.md`: this week's priorities and change log.
 
-Not created yet: `context/messaging/facts.md` (needed by `/campaign-copy`), brand visuals (logo, colours, fonts), anything in `knowledge-base/learnings/` and `meetings/`.
+Not created yet: brand visuals (logo, colours, fonts), anything in `knowledge-base/learnings/` and `meetings/`.
 
 ## How this folder works
 
