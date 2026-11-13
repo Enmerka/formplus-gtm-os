@@ -28,5 +28,26 @@ Formplus (https://www.formpl.us): one-line summary to fill in after research, wi
 - Ask before sending or publishing anything.
 - Log every change in this week's work log (`work-log/YYYY-Www.md`).
 
+## Skills
+
+From the GTM starter kit (`.claude/skills/`). Method docs they read are in `knowledge-base/playbooks/`.
+
+- Research to copy, in order: `campaign-strategy`, `signal-matrix`, `build-workflow-spec`, `campaign-copy`. Visual map: `miro-gtm-flowchart`.
+- Clay builds: `build-clay`, `prompt-builder`, `campaign-contract`, `design-clay-table-json`, `import-clay-table`, `save-clay-schema`.
+- Clay costs and data: `calculate-costs`, `workspace-cost-audit`, `export-tables`. Pre-launch checks: `campaign-qa`.
+- Research and deliverability: `crawl4ai`, `agent-browser`, `inbox-placement-test`.
+
 ## Tools
 
+GTM stack:
+
+- Clay: account and contact enrichment, signal tables, AI research columns.
+- Apollo: prospect and contact data, list building.
+- n8n: workflow automation that connects the stack.
+- HubSpot: CRM, the system of record for contacts, companies and deals.
+- Instantly: cold email sending and sequencing.
+
+In this repo (`tools/`):
+
+- `rex/`: unofficial Python SDK for Clay, driven by your browser session. Start with `tools/rex/GETTING_STARTED.md`.
+- `crawl4ai/`, `agent-browser/`: install guides for site crawling and browser automation.
