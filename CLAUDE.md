@@ -4,13 +4,23 @@
 
 Formplus (https://www.formpl.us): self-serve online and offline (beta) form builder for surveys, registrations, applications, payments and orders. Its pitch: "Let forms do the work" (https://www.formpl.us, accessed 2026-11-13). Freemium, $0 to $85 a month plus Enterprise (https://www.formpl.us/pricing, accessed 2026-11-13). Started in Lagos, Nigeria, at CcHub (https://9jagistland.blogspot.com/2018/11/the-formplus-story-from-cchub-to.html, accessed 2026-11-13). Legal entity Formplus Inc, Delaware (https://www.formpl.us/terms-and-privacy, accessed 2026-11-13). Main buyers in its case studies: schools, nonprofits, small service businesses and field reporting teams (https://www.formpl.us/case-studies, accessed 2026-11-13).
 
-Key files:
+Key files (everything written for Formplus so far; starter-kit files are covered by the folder guide below):
 
-- `context/icp/icp.md`: ICP in five layers, six segments, not-a-fit list.
+- `context/docs/research/company.md`: products, pricing, entity, origin, funding, team, reviews.
+- `context/docs/research/customers.md`: named customers, case studies, testimonials with quotes.
+- `context/docs/research/competitors.md`: competitor positioning and pricing.
+- `context/docs/research/market.md`: regulation (NDPA, GDPR), admissions cycles, donor reporting, paper forms.
+- `context/docs/research/signals.md`: public evidence of buying triggers.
+- `context/docs/research/voice.md`: how Formplus describes itself, verbatim.
+- `context/icp/icp.md`: ICP in five layers, six segments, NGO test cell, not-a-fit list.
 - `context/icp/personas.md`: champion, economic buyer and influencer personas.
 - `context/icp/signal-matrix.md`: segment x persona angles, scored buying signals, build order and workflow tracker (v1, work in progress).
-- `context/docs/gtm-system.md`: outbound GTM system design, step by step with decisions (v1).
-- `context/docs/research/`: `company.md`, `customers.md`, `competitors.md`, `market.md`, `signals.md`, `voice.md`.
+- `context/docs/gtm-system.md`: outbound GTM system design, step by step with decisions (v1, not built).
+- `output/campaigns/workflow-candidates.md`: three candidate workflows; W1 recommended.
+- `output/campaigns/google-forms-documents-payments/workflow-spec.md`: W1 spec, STRUCTURE-APPROVED 2026-11-13, copy pending.
+- `weekly-priorities/2026-W46.md`, `work-log/2026-W46.md`: this week's priorities and change log.
+
+Not created yet: `context/messaging/facts.md` (needed by `/campaign-copy`), anything in `context/positioning/`, `context/brand-kit/`, `knowledge-base/learnings/` and `meetings/`.
 
 ## How this folder works
 
