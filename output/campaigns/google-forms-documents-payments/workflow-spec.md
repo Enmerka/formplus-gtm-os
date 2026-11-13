@@ -1,6 +1,6 @@
 # W1: Google Forms or paper forms where documents or payments are requested
 
-**Status:** STRUCTURE-APPROVED 2026-11-13 · copy pending
+**Status:** COPY-APPROVED 2026-11-13
 
 - Workflow: W1 in [context/icp/signal-matrix.md](../../../context/icp/signal-matrix.md) (signals S2 + S3). System steps: [context/docs/gtm-system.md](../../../context/docs/gtm-system.md).
 - Segment: A-US schools (first build). Segment B nonprofits reuses the same build; swaps are marked **B reuse**.
@@ -126,6 +126,16 @@ Copy may only use these variables. Syntax: `{{snake_case}}`; match Instantly's s
 | `{{proof_customer}}` | Lookup on `route_cell`: COTSA (1, 5), Polk State (2, 6), Pennsylvania Academy of Ballet (3, 4) | All cells |
 | `{{proof_support}}` | Lookup on `route_cell`: Ruby's Place (3, 4); empty in 1, 2, 5, 6 | Cells 3 and 4 only. Copy must not reference it elsewhere |
 | `{{sender_name}}` | Instantly sender profile | All cells |
+| `{{sender_title}}` | Instantly sender profile (added 2026-11-13, owner-approved) | All cells |
+| `{{sender_company}}` | Instantly sender profile (added 2026-11-13, owner-approved) | All cells |
+| `{{e1l1}}` | Copy tag: Email 1 line 1, resolved in Clay from `route_cell` (6 variants) | All cells (one variant per cell) |
+| `{{e1l2}}` | Copy tag: Email 1 line 2, resolved in Clay from R1 and R2 (3 variants) | All cells |
+| `{{e1l3}}` | Copy tag: Email 1 value prop, resolved in Clay from R1 and R2 (3 variants; A live, B test) | All cells (added 2026-11-13, owner-approved) |
+| `{{social_proof}}` | Copy tag: proof line, resolved in Clay from `proof_customer` (3 variants) | All cells |
+| `{{e2l1}}` | Copy tag: Email 2 line 1, resolved in Clay from R1 and R2 (3 variants) | All cells |
+| `{{e2l2}}` | Copy tag: Email 2 line 2, from `proof_support` (Ruby's Place) | Cells 3 and 4 only; empty elsewhere, and the line is omitted |
+| `{{e3l1}}` | Copy tag: Email 3 line 1, resolved in Clay from `proof_customer` (3 variants) | All cells |
+| `{{li_dm1}}` | Copy tag: LinkedIn DM 1, resolved in Clay from R1 and R2 (3 variants) | All cells with a LinkedIn profile URL |
 
 Not available in any branch, so copy can never say it: fee amount, document list, deadline, number of applicants, enrollment size, current tool other than Google Forms and paper.
 
@@ -161,3 +171,193 @@ Not available in any branch, so copy can never say it: fee amount, document list
 - [x] Cadence and channel declared
 
 Next: `/campaign-copy` reads this file (GATE 1) and turns the six approved angles into copy.
+
+
+---
+
+## Copy
+
+Facts: `context/messaging/facts.md` (APPROVED 2026-11-13). Register: signal play. Sender placeholders stay as placeholders (practice project).
+
+### Email 1 (approved 2026-11-13)
+
+**Subject** (static, unchanged across the thread): `{google form question|your school's forms|a form question}`
+
+```
+{{first_name}},
+
+{{e1l1}}
+
+{{e1l2}}
+
+{{e1l3}}
+
+{{social_proof}}
+
+{Is that how it works on your side?|Is that close to how it works today?|Relevant, or way off?}
+
+{Thanks,|Best,|Cheers,}
+{{sender_name}}
+{{sender_title}}, {{sender_company}}
+```
+
+#### Line 1 `{{e1l1}}` (exhaustive across the 6 cells, no fallback)
+
++ CELL 1 (R1 true, R2 false, R3 false): From what I could find, {{school_name}}'s application runs on a Google Form and asks families for supporting documents.
++ CELL 2 (R1 true, R2 false, R3 true): Going by {{school_name}}'s website, families can apply two ways, a Google Form or a printable PDF, with supporting documents on top.
++ CELL 3 (R1 false, R2 true, R3 false): {{school_name}}'s website uses a Google Form for sign-ups and mentions a fee.
++ CELL 4 (R1 false, R2 true, R3 true): On {{school_name}}'s website there's a Google Form and a printable form to sign up, plus a fee to pay.
++ CELL 5 (R1 true, R2 true, R3 false): From my research, {{school_name}}'s application runs on a Google Form and also asks for documents and a fee.
++ CELL 6 (R1 true, R2 true, R3 true): Reading through {{school_name}}'s website, the full packet is there: a Google Form, a printable application, supporting documents and a fee.
+
+#### Line 2 `{{e1l2}}` (exhaustive on R1 and R2, no fallback)
+
++ DOCUMENTS ONLY (cells 1, 2): Google Forms asks people to sign in to a Google account before they can upload a file, so I'd guess some documents still arrive by email.
++ PAYMENT ONLY (cells 3, 4): My guess is someone then matches each payment back to the right family by hand.
++ DOCUMENTS AND PAYMENT (cells 5, 6): Google Forms asks people to sign in to a Google account before they can upload a file, so my guess is the documents and the fee each arrive on their own.
+
+#### Value prop `{{e1l3}}` (exhaustive on R1 and R2, no fallback; A live, B held as a test variant)
+
++ DOCUMENTS ONLY (cells 1, 2): A: Formplus is an online form builder that takes the application and the documents together in one form. B: Formplus lets schools take applications and documents together in one online form.
++ PAYMENT ONLY (cells 3, 4): A: Formplus is an online form builder that takes the registration and the fee together in one form. B: Formplus lets schools take registrations and fees together in one online form.
++ DOCUMENTS AND PAYMENT (cells 5, 6): A: Formplus is an online form builder that takes the application, the documents and the fee in one form. B: Formplus lets schools take applications, documents and fees in one online form.
+
+#### Social proof `{{social_proof}}` (exhaustive on `proof_customer`, no fallback)
+
++ COTSA (cells 1, 5): The Colorado Technology Student Association (COTSA) moved its entries off Google Forms and says Formplus "made collection of URLs and forms WAY easier".
++ POLK STATE (cells 2, 6): Polk State College Charter Schools used to type paper applications into a spreadsheet and now gets enrollment applications "100% faster".
++ PAB (cells 3, 4): Pennsylvania Academy of Ballet has students register and pay online through PayPal, and was "up and running with Formplus in a matter of just a day or two."
+
+Ruby's Place (`proof_support`, cells 3 and 4) is held for Email 2.
+
+Word counts (greeting to CTA, sign-off excluded, Variant A): cell 1: 93, cell 2: 93, cell 3: 82, cell 4: 88, cell 5: 99, cell 6: 98.
+
+#### Sample: cell 2, as received
+
+> **Subject:** google form question
+>
+> {{first_name}},
+>
+> Going by {{school_name}}'s website, families can apply two ways, a Google Form or a printable PDF, with supporting documents on top.
+>
+> Google Forms asks people to sign in to a Google account before they can upload a file, so I'd guess some documents still arrive by email.
+>
+> Formplus is an online form builder that takes the application and the documents together in one form.
+>
+> Polk State College Charter Schools used to type paper applications into a spreadsheet and now gets enrollment applications "100% faster".
+>
+> Is that how it works on your side?
+>
+> Thanks,
+> {{sender_name}}
+> {{sender_title}}, {{sender_company}}
+
+### Email 2 (approved 2026-11-13)
+
+Day 3 to 4, same thread, subject `Re:` Email 1's subject.
+
+```
+{{first_name}},
+
+{{e2l1}}
+
+{{e2l2}}          (cells 3 and 4 only; line omitted in cells 1, 2, 5, 6)
+
+The form can also sit on your own website.
+
+{Want me to send an example form?|Should I send over an example form?|Would an example form help?}
+
+{{sender_name}}
+```
+
+#### Line 1 `{{e2l1}}` (exhaustive on R1 and R2, no fallback)
+
++ DOCUMENTS ONLY (cells 1, 2): To add to my last note, uploaded files go to the school's own Google Drive, Dropbox or OneDrive.
++ PAYMENT ONLY (cells 3, 4): To add to my last note, payments go straight to the school, not to Formplus, and Formplus doesn't add a fee on top of the payment provider.
++ DOCUMENTS AND PAYMENT (cells 5, 6): To add to my last note, uploaded files go to the school's own Google Drive, Dropbox or OneDrive, and payments go straight to the school, not to Formplus.
+
+#### Line 2 `{{e2l2}}` (conditional on `proof_support`)
+
++ RUBY'S PLACE (cells 3, 4): Ruby's Place switched to Formplus when its Google Forms payment add-on was discontinued.
++ Cells 1, 2, 5, 6: line omitted.
+
+Word counts (greeting to CTA): cells 1, 2: 35; cells 3, 4: 57; cells 5, 6: 45.
+
+#### Sample: cell 3, as received
+
+> {{first_name}},
+>
+> To add to my last note, payments go straight to the school, not to Formplus, and Formplus doesn't add a fee on top of the payment provider.
+>
+> Ruby's Place switched to Formplus when its Google Forms payment add-on was discontinued.
+>
+> The form can also sit on your own website.
+>
+> Want me to send an example form?
+>
+> {{sender_name}}
+
+### Email 3 (approved 2026-11-13)
+
+Day 7 to 10, same thread, subject `Re:` Email 1's subject.
+
+```
+{{first_name}},
+
+{{e3l1}}
+
+{If someone else looks after these forms|If this sits with someone else at {{school_name}}}, who would be the right person to ask?
+
+{{sender_name}}
+```
+
+#### Line 1 `{{e3l1}}` (exhaustive on `proof_customer`, no fallback)
+
++ COTSA (cells 1, 5): One last example: COTSA now takes entries from "more than 2,000 participants" and calls the process "all digital".
++ POLK STATE (cells 2, 6): One last note: Polk State College Charter Schools says Formplus "decreased our time and cost ten times over".
++ RUBY'S PLACE (cells 3, 4): Last thing from me: Ruby's Place's COO said of Formplus, "It was the easiest to use, it provided what we needed and actually simplified the process for us".
+
+Word counts (greeting to CTA): cells 1, 5: 33; cells 2, 6: 31; cells 3, 4: 42.
+
+#### Sample: cell 2, as received
+
+> {{first_name}},
+>
+> One last note: Polk State College Charter Schools says Formplus "decreased our time and cost ten times over".
+>
+> If someone else looks after these forms, who would be the right person to ask?
+>
+> {{sender_name}}
+
+### LinkedIn (approved 2026-11-13)
+
+Only for contacts with a LinkedIn profile URL. Reply on either channel pauses the other.
+
+| Touch | Timing | Content |
+|---|---|---|
+| Connection request | Day 1 to 2 after Email 1 | No note |
+| DM 1 | 1 to 2 days after accept | `{{li_dm1}}` |
+| DM 2 | 3 to 5 days after DM 1 | Static, below |
+| No DM 3 | Withdraw unaccepted requests after 2 weeks | |
+
+#### DM 1 `{{li_dm1}}` (exhaustive on R1 and R2, no fallback)
+
++ DOCUMENTS ONLY (cells 1, 2): {{first_name}}, for this year's applications, will families upload documents straight into the form, or will some still come by email?
++ PAYMENT ONLY (cells 3, 4): {{first_name}}, will families pay the fee in the same step as signing up this year, or is that a separate step?
++ DOCUMENTS AND PAYMENT (cells 5, 6): {{first_name}}, will the documents and the fee come in through the same online step this year, or separately?
+
+#### DM 2 (static)
+
+```
+{Asking because|I ask because} Formplus lets schools take applications, documents and fees in one online form. {Happy to send an example if useful.|Glad to send over an example if it helps.}
+```
+
+Uses value-prop Variant B (approved in facts.md, not used in the live emails).
+
+#### Sample: cell 3, as received
+
+> {{first_name}}, will families pay the fee in the same step as signing up this year, or is that a separate step?
+>
+> Asking because Formplus lets schools take applications, documents and fees in one online form. Happy to send an example if useful.
+
+Before launch: `campaign-qa`, owner approval, and a final manual read against `knowledge-base/playbooks/copy-iron-laws.md`. Sequencer export: not yet generated.

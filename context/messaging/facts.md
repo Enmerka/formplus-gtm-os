@@ -2,7 +2,7 @@
 
 > The ONLY source of names, numbers and claims for prospect-facing copy (`/campaign-copy` FACTS GATE). Anything not listed here renders as `{{placeholder}}`. Built from `context/docs/research/` (checked 2026-11-13) on the owner's instruction. Practice project: the sender does not work for Formplus.
 
-**Last updated:** 2026-11-13 by Emmy (owner), drafted by Claude. **Status: DRAFT, pending owner approval.**
+**Last updated:** 2026-11-13 by Emmy (owner), drafted by Claude. **Status: APPROVED 2026-11-13 by Emmy (owner).**
 
 ---
 
@@ -23,19 +23,21 @@ Lead-in verbatim; the tail may adapt per route.
 - **Variant A:** "Formplus is an online form builder that takes the application, the documents and the fee in one form."
 - **Variant B:** "Formplus lets schools take applications, documents and fees in one online form."
 
+**Routed tails (approved 2026-11-13, owner):** documents only: "...takes the application and the documents together in one form." / "...take applications and documents together in one online form." Payment only: "...takes the registration and the fee together in one form." / "...take registrations and fees together in one online form." Documents and payment: the variants as written above.
+
 Product one-liner (context, not copy): self-serve online form builder for applications, registrations, payments and orders (company.md).
 
 ## Approved claims (use these exact phrasings)
 
 | Claim | Approved phrasing | Source | Approved by / date |
 |---|---|---|---|
-| Google Forms upload sign-in | "Google Forms asks people to sign in to a Google account before they can upload a file." | competitors.md (https://formswrite.com/blog/why-can-t-i-upload-a-file-to-google-forms, https://contentsnare.com/google-forms-file-uploads/) | Pending |
-| Where files go | "Uploaded files go to the school's own Google Drive, Dropbox or OneDrive." | company.md (https://www.formpl.us/compare-plans) | Pending |
-| Payment providers | "Fees are paid in the form through Stripe or PayPal." | company.md (https://www.formpl.us/payments) | Pending |
-| No Formplus payment fee | "Formplus doesn't add a fee on top of the payment provider." Source wording: "We do not charge a fee to integrate a form with any of our payment partners." | company.md, voice.md (https://www.formpl.us/payment-forms) | Pending |
-| Money goes to the school | "Payments go straight to the school, not to Formplus." Source wording: "the money received goes directly to the Form Owner or User, and not FormPlus." | company.md (https://www.formpl.us/terms-and-privacy) | Pending |
-| Embed on the website | "The form can sit on the school's own website." Source wording: "Create booking forms with payments to embed in your website pages." | voice.md (https://www.formpl.us/booking-forms) | Pending |
-| Security (replies only, not cold copy) | "256-bit SSL on every form; data encrypted at rest with AES-256; GDPR compliant." | company.md (https://www.formpl.us/pricing) | Pending |
+| Google Forms upload sign-in | "Google Forms asks people to sign in to a Google account before they can upload a file." | competitors.md (https://formswrite.com/blog/why-can-t-i-upload-a-file-to-google-forms, https://contentsnare.com/google-forms-file-uploads/) | Emmy, 2026-11-13 |
+| Where files go | "Uploaded files go to the school's own Google Drive, Dropbox or OneDrive." | company.md (https://www.formpl.us/compare-plans) | Emmy, 2026-11-13 |
+| Payment providers | "Fees are paid in the form through Stripe or PayPal." | company.md (https://www.formpl.us/payments) | Emmy, 2026-11-13 |
+| No Formplus payment fee | "Formplus doesn't add a fee on top of the payment provider." Source wording: "We do not charge a fee to integrate a form with any of our payment partners." | company.md, voice.md (https://www.formpl.us/payment-forms) | Emmy, 2026-11-13 |
+| Money goes to the school | "Payments go straight to the school, not to Formplus." Source wording: "the money received goes directly to the Form Owner or User, and not FormPlus." | company.md (https://www.formpl.us/terms-and-privacy) | Emmy, 2026-11-13 |
+| Embed on the website | "The form can sit on the school's own website." Owner-approved second-person form (2026-11-13): "The form can also sit on your own website." Source wording: "Create booking forms with payments to embed in your website pages." | voice.md (https://www.formpl.us/booking-forms) | Emmy, 2026-11-13 |
+| Security (replies only, not cold copy) | "256-bit SSL on every form; data encrypted at rest with AES-256; GDPR compliant." | company.md (https://www.formpl.us/pricing) | Emmy, 2026-11-13 |
 
 **Formatting rules for proof**
 - Write customer names exactly as in the table below. No domains.
@@ -68,7 +70,7 @@ Everyone else (Beauty Bar Group, Watamu Treehouse, homepage logos such as Notre 
 - Polk State proves paper-to-online for applications with uploads. It doesn't prove payments; don't use it for payment-only cells.
 - COTSA proves documents and entries. It doesn't prove payments.
 - PAB proves registration and payment. It doesn't prove document collection.
-- Ruby's Place proves leaving Google Forms over payments. It's not a school.
+- Ruby's Place proves leaving Google Forms over payments. It's not a school. Owner-approved exception (2026-11-13): sole proof line in W1 Email 3, cells 3 and 4, because PAB's only approved quote is used in Email 1.
 - No customer proves offline collection.
 
 ## Banned
