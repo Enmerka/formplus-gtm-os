@@ -41,7 +41,7 @@ Built from `context/icp/` ([icp.md](../icp/icp.md), [personas.md](../icp/persona
 
 ![Formplus GTM system flow chart: steps 0 to 11 with decisions, exits and the weekly loop back to the Context OS](../../diagrams/formplus-gtm-system.png)
 
-Source: [diagrams/formplus-gtm-system.json](../../diagrams/formplus-gtm-system.json) (spec) and [diagrams/formplus-gtm-system.svg](../../diagrams/formplus-gtm-system.svg) (vector), built with the `miro-gtm-flowchart` skill. Two simplifications: the step 8 QA and owner approval gate sits inside the copy step, and out-of-office replies are left out. Miro board: not created yet (the Miro MCP server did not connect).
+Source: [diagrams/formplus-gtm-system.json](../../diagrams/formplus-gtm-system.json) (spec) and [diagrams/formplus-gtm-system.svg](../../diagrams/formplus-gtm-system.svg) (vector), built with the `miro-gtm-flowchart` skill. Two simplifications: the step 8 QA and owner approval gate sits inside the copy step, and out-of-office replies are left out. Miro board: [Formplus GTM System](https://miro.com/app/board/uXjVENiUnds=/?share_link_id=298672431167) (the PNG, uploaded by hand on 2026-11-14 because the Miro MCP server would not start in Claude Code).
 
 ---
 
