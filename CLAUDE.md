@@ -72,6 +72,7 @@ GTM stack:
 - n8n: workflow automation that connects the stack.
 - HubSpot: CRM, the system of record for contacts, companies and deals.
 - Instantly: cold email sending and sequencing.
+- Notion: read-only mirror of the Context OS, "Formplus GTM OS" (https://app.notion.com/p/418c521cbeb18193854cd6d7faebe3fa). One page per file in `context/` and `output/`, raw research excluded. GitHub is the source of truth: edit the repo files, then re-sync Notion. Connected through the project's Notion MCP (`.mcp.json`).
 
 In this repo (`tools/`):
 
