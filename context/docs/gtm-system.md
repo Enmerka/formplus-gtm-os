@@ -37,6 +37,12 @@ Built from `context/icp/` ([icp.md](../icp/icp.md), [personas.md](../icp/persona
 11 Weekly feedback (n8n + review)  learnings file, ICP and signal status updates -> back to 0
 ```
 
+### Flow chart
+
+![Formplus GTM system flow chart: steps 0 to 11 with decisions, exits and the weekly loop back to the Context OS](../../diagrams/formplus-gtm-system.png)
+
+Source: [diagrams/formplus-gtm-system.json](../../diagrams/formplus-gtm-system.json) (spec) and [diagrams/formplus-gtm-system.svg](../../diagrams/formplus-gtm-system.svg) (vector), built with the `miro-gtm-flowchart` skill. Two simplifications: the step 8 QA and owner approval gate sits inside the copy step, and out-of-office replies are left out. Miro board: not created yet (the Miro MCP server did not connect).
+
 ---
 
 ## Step 0: Context OS

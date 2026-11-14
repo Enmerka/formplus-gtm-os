@@ -1,0 +1,447 @@
+{
+  "title": "Formplus: outbound GTM system, end to end",
+  "subtitle": "v1 design from context/docs/gtm-system.md, not built yet. Row 1 reads left to right, row 2 right to left, row 3 left to right.",
+  "rows": [
+    {
+      "title": "Find and qualify accounts",
+      "direction": "ltr",
+      "columns": [
+        "1A",
+        "1B",
+        "1C",
+        "1D",
+        "1E",
+        "1F",
+        "1G"
+      ]
+    },
+    {
+      "title": "Route, find the people and get approval",
+      "direction": "rtl",
+      "columns": [
+        "2A",
+        "2B",
+        "2C",
+        "2D",
+        "2E",
+        "2F"
+      ]
+    },
+    {
+      "title": "Send, handle replies and learn",
+      "direction": "ltr",
+      "columns": [
+        "3A",
+        "3B",
+        [
+          "o1",
+          "o2",
+          "o3",
+          "o4",
+          "o5"
+        ],
+        [
+          "a1",
+          "a2",
+          "a3",
+          "a4",
+          "a5"
+        ],
+        "3C",
+        "3D"
+      ]
+    }
+  ],
+  "nodes": {
+    "1A": {
+      "kind": "start",
+      "title": "Context OS",
+      "sub": "ICP, personas, signal matrix, playbooks. Only live signals and v1 segments run",
+      "tools": [
+        "claude_code",
+        "github"
+      ],
+      "w": 320
+    },
+    "1B": {
+      "kind": "step",
+      "title": "Buying signals",
+      "sub": [
+        "W1 Google Forms or paper",
+        "W2 recurring events",
+        "W3 NG school form sales",
+        "W4 hiring (stacked only)"
+      ],
+      "tools": [
+        "clay"
+      ]
+    },
+    "1C": {
+      "kind": "decision",
+      "title": "New signal?"
+    },
+    "skip": {
+      "kind": "exit",
+      "title": "Skip duplicate",
+      "below": "1C"
+    },
+    "1D": {
+      "kind": "step",
+      "title": "Find companies",
+      "sub": "One Companies table, clean domain, source kept",
+      "tools": [
+        "clay"
+      ]
+    },
+    "1E": {
+      "kind": "decision",
+      "title": "In HubSpot?"
+    },
+    "supp": {
+      "kind": "exit",
+      "title": "Drop",
+      "sub": "Customer, open deal, suppressed or contacted in 90 days",
+      "below": "1E",
+      "w": 240
+    },
+    "1F": {
+      "kind": "step",
+      "title": "Enrich",
+      "sub": [
+        "Firmographics",
+        "Page scan for forms",
+        "Payment stack",
+        "Signal detail"
+      ],
+      "tools": [
+        "clay"
+      ]
+    },
+    "1G": {
+      "kind": "decision",
+      "title": "ICP fit?"
+    },
+    "nofit": {
+      "kind": "exit",
+      "title": "Drop, log reason",
+      "sub": "Not a fit, thin data or outside US, NG, KE",
+      "below": "1G",
+      "w": 240
+    },
+    "2A": {
+      "kind": "step",
+      "title": "Route by segment",
+      "sub": [
+        "A-US, A-NG schools",
+        "B nonprofits",
+        "D service SMBs",
+        "E African SMEs"
+      ],
+      "tools": [
+        "clay"
+      ]
+    },
+    "2B": {
+      "kind": "step",
+      "title": "Find people",
+      "sub": "Champion first, then economic buyer. Max 2 at large orgs",
+      "tools": [
+        "Apollo"
+      ],
+      "w": 280
+    },
+    "2C": {
+      "kind": "decision",
+      "title": "Contact found?"
+    },
+    "nocontact": {
+      "kind": "exit",
+      "title": "Drop as no_contact",
+      "below": "2C"
+    },
+    "2D": {
+      "kind": "step",
+      "title": "Find and verify email",
+      "sub": "Waterfall, then Bounceban",
+      "tools": [
+        "clay"
+      ]
+    },
+    "2E": {
+      "kind": "decision",
+      "title": "Email valid?"
+    },
+    "lionly": {
+      "kind": "exit",
+      "title": "LinkedIn only",
+      "sub": "Or low-volume campaign if catch-all, else drop",
+      "below": "2E",
+      "w": 240
+    },
+    "3A": {
+      "kind": "step",
+      "title": "Send the sequence",
+      "sub": "Up to 4 emails over 14 days, 2 LinkedIn DMs, pause on reply",
+      "tools": [
+        "Instantly",
+        "LinkedIn"
+      ],
+      "w": 300
+    },
+    "3B": {
+      "kind": "step",
+      "title": "Sort replies",
+      "sub": "AI classifies, drafts for a person",
+      "tools": [
+        "n8n"
+      ]
+    },
+    "o1": {
+      "kind": "branch",
+      "title": "Positive",
+      "h": 80
+    },
+    "o2": {
+      "kind": "branch",
+      "title": "Question or objection",
+      "h": 80
+    },
+    "o3": {
+      "kind": "branch",
+      "title": "Not now",
+      "h": 80
+    },
+    "o4": {
+      "kind": "branch",
+      "title": "Wrong person",
+      "h": 80
+    },
+    "o5": {
+      "kind": "branch",
+      "title": "Not interested, unsub",
+      "h": 80
+    },
+    "a1": {
+      "kind": "step",
+      "title": "Trial link or call",
+      "sub": "Trial: D, E, small B. Call: A, large B",
+      "w": 320,
+      "h": 80,
+      "tools": [
+        "n8n"
+      ]
+    },
+    "a2": {
+      "kind": "step",
+      "title": "Answer from facts, tag it",
+      "sub": "Unknowns go to a person",
+      "w": 320,
+      "h": 80,
+      "tools": [
+        "hubspot"
+      ]
+    },
+    "a3": {
+      "kind": "step",
+      "title": "Task for their date",
+      "w": 320,
+      "h": 80,
+      "tools": [
+        "hubspot"
+      ]
+    },
+    "a4": {
+      "kind": "exit",
+      "title": "Add named person, back to 2B",
+      "w": 320,
+      "h": 80
+    },
+    "a5": {
+      "kind": "exit",
+      "title": "Suppress 180 days or for good",
+      "w": 320,
+      "h": 80
+    },
+    "3C": {
+      "kind": "step",
+      "title": "CRM record",
+      "sub": "Company, contact, deal on calls. Suppression feeds 1E",
+      "tools": [
+        "hubspot"
+      ],
+      "w": 260
+    },
+    "3D": {
+      "kind": "start",
+      "title": "Weekly review",
+      "sub": "Reply, bounce, unsub and trial rates by signal, segment and angle",
+      "tools": [
+        "n8n"
+      ],
+      "w": 300,
+      "align": "bottom"
+    },
+    "2F": {
+      "kind": "step",
+      "title": "Write and QA copy",
+      "sub": [
+        "Signal line, matched proof",
+        "One question CTA",
+        "campaign-qa passed",
+        "Owner approves the send"
+      ],
+      "tools": [
+        "claude_code"
+      ]
+    }
+  },
+  "edges": [
+    [
+      "1A",
+      "1B"
+    ],
+    [
+      "1B",
+      "1C"
+    ],
+    [
+      "1C",
+      "1D",
+      "Yes"
+    ],
+    [
+      "1C",
+      "skip",
+      "No"
+    ],
+    [
+      "1D",
+      "1E"
+    ],
+    [
+      "1E",
+      "1F",
+      "No"
+    ],
+    [
+      "1E",
+      "supp",
+      "Yes"
+    ],
+    [
+      "1F",
+      "1G"
+    ],
+    [
+      "1G",
+      "2A",
+      "Yes"
+    ],
+    [
+      "1G",
+      "nofit",
+      "No"
+    ],
+    [
+      "2A",
+      "2B"
+    ],
+    [
+      "2B",
+      "2C"
+    ],
+    [
+      "2C",
+      "2D",
+      "Yes"
+    ],
+    [
+      "2C",
+      "nocontact",
+      "No"
+    ],
+    [
+      "2D",
+      "2E"
+    ],
+    [
+      "2E",
+      "2F",
+      "Yes"
+    ],
+    [
+      "2E",
+      "lionly",
+      "No"
+    ],
+    [
+      "2F",
+      "3A"
+    ],
+    [
+      "3A",
+      "3B"
+    ],
+    [
+      "3B",
+      "o1"
+    ],
+    [
+      "3B",
+      "o2"
+    ],
+    [
+      "3B",
+      "o3"
+    ],
+    [
+      "3B",
+      "o4"
+    ],
+    [
+      "3B",
+      "o5"
+    ],
+    [
+      "o1",
+      "a1"
+    ],
+    [
+      "o2",
+      "a2"
+    ],
+    [
+      "o3",
+      "a3"
+    ],
+    [
+      "o4",
+      "a4"
+    ],
+    [
+      "o5",
+      "a5"
+    ],
+    [
+      "a1",
+      "3C"
+    ],
+    [
+      "a2",
+      "3C"
+    ],
+    [
+      "a3",
+      "3C"
+    ],
+    [
+      "3C",
+      "3D"
+    ]
+  ],
+  "loop": {
+    "from": "3D",
+    "to": "1A",
+    "label": "Weekly loop: results update the ICP, personas and signal matrix"
+  }
+}
