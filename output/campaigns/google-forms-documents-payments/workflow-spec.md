@@ -26,9 +26,10 @@
 | Box | Rule | Source |
 |---|---|---|
 | Geography | United States, headquarters in the US (Clay company search location filter, headquarters only) | icp.md, A-US |
-| Industry | Primary/Secondary Education, Education Management (charter and private K-12 schools, arts schools, student associations, training consortia). UNVERIFIED: record the exact industry values Clay's search picker offers; "Education Management" may not exist in the current list | icp.md, A-US target definition |
+| Industry | Clay industry "Primary and Secondary Education" (the value in Clay's search picker, confirmed 2026-11-15). Target: charter, private, independent and Catholic K-12 schools | icp.md, A-US target definition; Clay picker checked 2026-11-15 |
+| Description | Company description contains any of: `private school`, `charter school`, `independent school`, `day school`, `academy`, `Catholic school`, `Montessori`, `admissions`. Without it the results mix in edtech companies, education nonprofits and state education departments | Clay Find Companies preview, 2026-11-15 |
 | Size | Clay company size bands `11-50`, `51-200` and `201-500` only. Schools with no size listed drop out (accepted 2026-11-15). INFERRED cap, to tune on the sample | icp.md (segment sizes Not found); Clay size bands (`tools/rex/action-registry.md`) |
-| Volume | Unknown. Record the free search preview count before importing, then the pass rate at each step on the sample | Not measured yet |
+| Volume | About 5K companies with every filter above: `11-50` about 2.6K, `51-200` about 2K, `201-500` 356. 24.6K before the description filter. With it, `51-200` and `201-500` are almost all private, Catholic and independent schools; `11-50` still includes some public high schools, a think tank and a camp provider, which F1 must drop. Pass rates at each later step: unknown until the sample | Clay Find Companies preview (free), 2026-11-15 |
 | Trigger | T2 AND T3 (section 4) | signal-matrix.md, S2 + S3 |
 | Recipient | **Champion:** admissions officer, director of admissions, registrar, enrollment manager, instructional technologist. **Fallback** if no champion is found: head of school or principal. One contact per school in v1, picked by the title-rank formula (G1) | personas.md; gtm-system.md step 6 |
 
@@ -51,7 +52,7 @@
 
 | Element | A-US value | B value |
 |---|---|---|
-| Industry | Primary/Secondary Education, Education Management | Non-profit, Civic & Social Organisation (UNVERIFIED against Clay's industry picker) |
+| Industry | Primary and Secondary Education | Non-profit, Civic & Social Organisation (UNVERIFIED against Clay's industry picker) |
 | Page keywords (T2) | admission, apply, application, enrol, enroll, enrollment, registration, register | registration, register, membership, conference, training, events, call for proposals |
 | Recipient | Admissions officer, registrar, enrollment manager; fallback head of school | Program, membership or events manager; fallback executive director |
 | Proof | Section 5 | Documents cells: AASHE. Payment cells: Ruby's Place |
@@ -64,11 +65,11 @@ Build order: free before paid, and every paid step runs only on rows that passed
 
 | Step | Source | Delivers | Cost |
 |---|---|---|---|
-| 1. Company universe | Clay company search: section 2 industry, US headquarters, size bands `11-50`, `51-200`, `201-500`. The preview count is the volume check | Company name, domain, size, industry, description, LinkedIn URL | Free |
+| 1. Company universe | Clay company search (Find Companies): headquarters United States, industry "Primary and Secondary Education", size bands `11-50`, `51-200`, `201-500`, and the section 2 description filter. Preview count about 5K (section 2) | Company name, domain, size, industry, description, LinkedIn URL | Free |
 | 2. Exclusions | Lookup on the Exclusions table, matched on domain (X2) | `is_excluded` | Free |
 | 3. Segment check | Clay Use AI column, JSON output (F1) | `segment`, `not_fit_reason`, `segment_evidence` | Paid |
 | 4. Find the admissions page | Clay's native website scrape on the homepage (likely labelled "Scrape Website"; if not, search Clay's enrichments for "scrape"). A formula keeps the first link whose URL or link text matches the T2 page keywords. **Fallback:** Claygent, only on rows where no admissions page was found, returns the admissions page URL | `admissions_page_url` | Paid |
-| 5. Scan the admissions page | Clay's native website scrape on `admissions_page_url`. Needs the page's links, iframe `src` values and visible text. UNVERIFIED: whether the scrape returns iframe `src` values (and the full link list); test on one domain before the build. If it doesn't, embedded Google Forms need the Claygent fallback | Links, iframes, page text | Paid |
+| 5. Scan the admissions page | Clay's native website scrape on `admissions_page_url`. Needs the page's links, iframe `src` values and visible text. UNVERIFIED: whether the scrape returns iframe `src` values (and the full link list). Proven on 1 row of the Schools table when this column is built; Claygent is the backup for embedded forms | Links, iframes, page text | Paid |
 | 6. Page asks | Clay Use AI column on the page text, JSON output (section 4) | R1, R2, R3 fields and evidence quotes | Paid |
 | 7. Recipient | Clay people search started from a view of the companies that passed steps 1 to 6, with the section 2 titles. **Fallback:** Apollo people search by domain, only for schools where Clay finds no one | `first_name`, title, LinkedIn URL | Free (Apollo fallback: paid) |
 | 8. Email | Clay waterfall: Prospeo, Icypeas, Leadmagic, Findymail; then Bounceban to verify (`knowledge-base/playbooks/clay/expert.md`). Runs only where `Ready to Contact?` is true | Verified email, verification status | Paid |
@@ -90,7 +91,7 @@ Reads run on the scanned admissions or registration page unless stated. Keyword 
 | T3 | Page asks for documents or a payment | trigger | Formula: R1 OR R2. If `asks_documents` and `asks_payment` are both `no`, the row drops. If any of the three PA fields is `unclear`, the row goes to the **Review** view and `Ready to Contact?` stays false until a person sets the field | `asks_docs_or_payment`, `needs_review` |
 | C1 | Which process the page is for | context-clause | Formula (regex) on URL and title, first match wins. Enum: `admissions`, `enrollment`, `registration`, `camp`, `other` | `process_type` |
 | C2 | School name | context-clause | Clay company search name, cleaned of legal suffixes; fallback: page title | `school_name` |
-| F1 | Segment fit | filter | Use AI column, JSON output. Input: company name, domain, industry, size and description from the Clay company search. Fields: `segment` (hard enum: `A-US`, `B`, `D`, `not_fit`, `other`), `not_fit_reason`, `segment_evidence` (a word-for-word quote from the input). Only `A-US` continues (`B` continues in the B build); `other` goes to the Review view. Prove on 2 or 3 schools before running the rest | `segment`, `not_fit_reason`, `segment_evidence` |
+| F1 | Segment fit | filter | Use AI column, JSON output. Input: company name, domain, industry, size and description from the Clay company search. Fields: `segment` (hard enum: `A-US`, `B`, `D`, `not_fit`, `other`), `not_fit_reason`, `segment_evidence` (a word-for-word quote from the input). Only `A-US` continues (`B` continues in the B build); `other` goes to the Review view. Must return `not_fit` for the non-schools the search lets through: public high schools, think tanks and camp providers (seen in the `11-50` band, 2026-11-15). Prove on 2 or 3 schools before running the rest | `segment`, `not_fit_reason`, `segment_evidence` |
 | X1 | Paid form builder on the same page | exclusion | Formula (regex) on link and iframe domains: `jotform.com`, `typeform.com`, `formstack.com`, `wufoo.com`. True: the row drops | `has_paid_builder` |
 | X2 | Customer or competitor | exclusion | Lookup on the Exclusions table, matched on domain. Found: the row drops | `is_excluded` |
 | G1 | Title rank | gate | Formula on the person's title, INFERRED order: 1 admissions or enrollment titles (admissions officer, director of admissions, enrollment manager), 2 registrar, 3 instructional technologist, 4 head of school or principal. Keep the lowest rank per domain; ties keep the first person found | `title_rank`, `is_top_contact` |
@@ -164,7 +165,7 @@ Not available in any branch, so copy can never say it: fee amount, document list
 | Item | Setting | Source |
 |---|---|---|
 | Periodicity | Always-on. Monthly re-run of the Clay company search, adding new US schools only; weekly page scan of new rows only | gtm-system.md step 1 (cadence INFERRED for an account-first list) |
-| Before launch | Run the sample: record the search preview count, how many pass each of X2, F1, T2, P1, T3 and the Review view, the cell spread, and the sign-in redirect test. Test the iframe `src` question on one domain first | workflow-candidates.md |
+| Before launch | Run the sample: record the search preview count, how many pass each of X2, F1, T2, P1, T3 and the Review view, the cell spread, and the sign-in redirect test. Prove the scrape, including iframe `src` values, on 1 row of the Schools table first | workflow-candidates.md |
 | Re-entry | Suppressed for 90 days after the sequence ends; re-enters only on a new signal. Enforced from Week 3, when HubSpot is connected | gtm-system.md step 2 |
 | Channel | Both. Email in Instantly for every verified contact. LinkedIn if a profile URL exists | gtm-system.md steps 7 and 8 |
 | Email | Day 0, Day 3 to 4, Day 7 to 10, optional Day 14+ | knowledge-base/playbooks/copy-frameworks.md |
@@ -191,7 +192,7 @@ Not available in any branch, so copy can never say it: fee amount, document list
 - [x] Cadence and channel declared
 - [x] Clay sources and signals revised (2026-11-15): every signal read by a Clay search filter, lookup, scrape, Use AI column or formula
 
-Open before the build: test whether Clay's website scrape returns iframe `src` values (one domain); confirm the industry values in Clay's search picker; record the search preview count.
+Checks done 2026-11-15: industry value confirmed ("Primary and Secondary Education"); preview count recorded (about 5K, section 2). Still open: whether Clay's website scrape returns iframe `src` values, proven on 1 row of the Schools table when that column is built.
 
 Next: `/clay-build-plan` turns this spec into the step-by-step Clay build guide (Week 2 step 2). Copy is done (COPY-APPROVED 2026-11-13).
 
