@@ -2,10 +2,12 @@
 
 **Status:** COPY-APPROVED 2026-11-13
 
+**Revised 2026-11-15:** sources and signals revised for Clay. Account-first from Clay's company search; T1 (BuiltWith list) dropped, T2 is the trigger; page reads from Clay's website scrape with a Claygent fallback; R1 to R3 read by one Use AI column ("Page asks"); Exclusions table and `Ready to Contact?` gate added. Copy unchanged; every copy variable still has a source (section 6).
+
 - Workflow: W1 in [context/icp/signal-matrix.md](../../../context/icp/signal-matrix.md) (signals S2 + S3). System steps: [context/docs/gtm-system.md](../../../context/docs/gtm-system.md).
 - Segment: A-US schools (first build). Segment B nonprofits reuses the same build; swaps are marked **B reuse**.
-- Facts: there is no `context/messaging/facts.md` yet. Every fact here comes from `context/docs/research/` (checked 2026-11-13). Anything else is a `{{placeholder}}`.
-- Labels: INFERRED = our judgement, not in the research.
+- Facts: copy facts come from [context/messaging/facts.md](../../../context/messaging/facts.md) (APPROVED 2026-11-13), which draws on `context/docs/research/` (checked 2026-11-13). Anything else is a `{{placeholder}}`.
+- Labels: INFERRED = our judgement, not in the research. UNVERIFIED = a Clay behaviour not yet tested on a real row.
 
 ---
 
@@ -13,9 +15,9 @@
 
 **US schools whose admissions or registration page runs a Google Form while asking applicants for documents or a payment.**
 
-- Catalog match (`knowledge-base/playbooks/workflow-anatomy.md`): "Companies using specific software" (Google Forms), stacked with "Website content mentions" (the page asks for documents or payment).
-- Signal-led: the list starts from the BuiltWith Google Forms list, not from a list of schools.
-- Scope: schools that use paper only, with no Google Form, are out of this workflow. They are not on the BuiltWith list. Paper is a router inside the Google Forms list (R3).
+- Catalog match (`knowledge-base/playbooks/workflow-anatomy.md`): "Website content mentions" (the page asks for documents or payment), stacked with "Companies using specific software" (Google Forms), read from the school's own admissions page rather than from a technology list.
+- Account-first: the list starts from Clay's company search (US schools by industry and size, section 2). The trigger is T2, a Google Form found on the school's admissions or registration page.
+- Scope: schools that use paper only, with no Google Form, are out of this workflow; T2 drops them. Paper is a router inside the Google Form rows (R3).
 
 ## 2. Inclusion / exclusion [ICP]
 
@@ -23,29 +25,33 @@
 
 | Box | Rule | Source |
 |---|---|---|
-| Geography | United States | icp.md, A-US |
-| Industry | Primary/Secondary Education, Education Management (charter and private K-12 schools, arts schools, student associations, training consortia) | icp.md, A-US target definition |
-| Size | Drop only rows with a **known** Apollo headcount above 500. Rows with a blank headcount pass through to F1. Lower bound: none in v1 (INFERRED cap from icp.md, to tune) | icp.md |
-| Trigger | T1 AND T2 AND T3 (section 4) | signal-matrix.md, S2 + S3 |
-| Recipient | **Champion:** admissions officer, director of admissions, registrar, enrollment manager, instructional technologist. **Fallback** if no champion is found: head of school or principal. One contact per school in v1 | personas.md; gtm-system.md step 6 |
+| Geography | United States, headquarters in the US (Clay company search location filter, headquarters only) | icp.md, A-US |
+| Industry | Primary/Secondary Education, Education Management (charter and private K-12 schools, arts schools, student associations, training consortia). UNVERIFIED: record the exact industry values Clay's search picker offers; "Education Management" may not exist in the current list | icp.md, A-US target definition |
+| Size | Clay company size bands `11-50`, `51-200` and `201-500` only. Schools with no size listed drop out (accepted 2026-11-15). INFERRED cap, to tune on the sample | icp.md (segment sizes Not found); Clay size bands (`tools/rex/action-registry.md`) |
+| Volume | Unknown. Record the free search preview count before importing, then the pass rate at each step on the sample | Not measured yet |
+| Trigger | T2 AND T3 (section 4) | signal-matrix.md, S2 + S3 |
+| Recipient | **Champion:** admissions officer, director of admissions, registrar, enrollment manager, instructional technologist. **Fallback** if no champion is found: head of school or principal. One contact per school in v1, picked by the title-rank formula (G1) | personas.md; gtm-system.md step 6 |
 
 ### Exclude
 
 | Who | Why |
 |---|---|
-| Existing Formplus customers, open deals, suppressed or unsubscribed contacts in HubSpot | gtm-system.md steps 2 and 10 |
-| Case-study customers: Polk State College Charter Schools, COTSA, Pennsylvania Academy of Ballet, NPTC | Lookalike seeds, not targets (gtm-system.md step 2) |
-| Contacted in the last 90 days with the same signal | gtm-system.md step 2 (PROPOSED window) |
+| Formplus customers and competitors in the Exclusions table, matched on domain (X2) | Customers are lookalike seeds, not targets; competitors are not buyers (gtm-system.md step 2) |
+| Case-study customers: Polk State College Charter Schools, COTSA, Pennsylvania Academy of Ballet, NPTC | In the Exclusions table as `customer` rows |
 | Google Form found only on non-admissions pages (newsletter, contact, feedback) | The signal does not hold (gtm-system.md step 1) |
 | Admissions page also embeds Jotform, Typeform, Formstack or Wufoo (X1) | They already pay for a form builder; displacement is a different story |
-| Not a fit per icp.md: healthcare patient data, enterprise compliance needs | icp.md not-a-fit list |
+| Not a fit per icp.md: healthcare patient data, enterprise compliance needs | icp.md not-a-fit list; F1 returns `not_fit` |
 | Outside the US | Wrong segment; Nigerian schools are W3 |
+
+**Week 3 (HubSpot access not available until then):** existing Formplus customers, open deals, suppressed or unsubscribed contacts, and contacts reached in the last 90 days with the same signal (gtm-system.md steps 2 and 10; 90 days is a PROPOSED window). Until then, the Exclusions table is the only customer check.
+
+**Exclusions table:** one row per company, columns `Company Name | Domain | Type` (`customer` or `competitor`). Customers: the named customers in `context/docs/research/customers.md`, including the four above. Competitors: the companies in `context/positioning/competitors.md`. Domains written plain (`example.org`, no `https://`, no `www.`). Leave a domain blank rather than guess it, and fill it from the company's own website.
 
 ### B reuse (nonprofits)
 
 | Element | A-US value | B value |
 |---|---|---|
-| Industry | Primary/Secondary Education, Education Management | Non-profit, Civic & Social Organisation |
+| Industry | Primary/Secondary Education, Education Management | Non-profit, Civic & Social Organisation (UNVERIFIED against Clay's industry picker) |
 | Page keywords (T2) | admission, apply, application, enrol, enroll, enrollment, registration, register | registration, register, membership, conference, training, events, call for proposals |
 | Recipient | Admissions officer, registrar, enrollment manager; fallback head of school | Program, membership or events manager; fallback executive director |
 | Proof | Section 5 | Documents cells: AASHE. Payment cells: Ruby's Place |
@@ -54,48 +60,60 @@ Everything in sections 3 to 7 stays the same.
 
 ## 3. Sources [ENGINE]
 
-| Step | Source | Delivers |
-|---|---|---|
-| Trigger universe | BuiltWith Google Forms list via Clay "Find Technology Stack". 54,491 live sites, 28,913 in the US (https://trends.builtwith.com/widgets/Google-Forms, checked 2026-11-13) | Domain, `has_google_forms` |
-| ICP box | Apollo company enrichment via Clay | Industry, headcount (may be blank), country, company name |
-| Page discovery and scan | crawl4ai (`tools/crawl4ai/`), or Claygent in Clay. Crawl the homepage and navigation; keep pages whose URL or link text matches the page keywords; return each kept page's links, iframe `src` values and visible text | `admissions_page_url`, links, iframes, page text |
-| Segment check | Clay AI fit-check column, enum output (gtm-system.md step 4) | `segment`, `not_fit_reason` |
-| Exclusions | HubSpot companies, deals and suppression list | Customer, deal and suppression flags |
-| Recipient | Apollo people search by domain + section 2 titles | `first_name`, title, LinkedIn URL |
-| Email | Clay waterfall: Prospeo, Icypeas, Leadmagic, Findymail; then Bounceban to verify (`knowledge-base/playbooks/clay/expert.md`) | Verified email, verification status |
+Build order: free before paid, and every paid step runs only on rows that passed every step before it.
+
+| Step | Source | Delivers | Cost |
+|---|---|---|---|
+| 1. Company universe | Clay company search: section 2 industry, US headquarters, size bands `11-50`, `51-200`, `201-500`. The preview count is the volume check | Company name, domain, size, industry, description, LinkedIn URL | Free |
+| 2. Exclusions | Lookup on the Exclusions table, matched on domain (X2) | `is_excluded` | Free |
+| 3. Segment check | Clay Use AI column, JSON output (F1) | `segment`, `not_fit_reason`, `segment_evidence` | Paid |
+| 4. Find the admissions page | Clay's native website scrape on the homepage (likely labelled "Scrape Website"; if not, search Clay's enrichments for "scrape"). A formula keeps the first link whose URL or link text matches the T2 page keywords. **Fallback:** Claygent, only on rows where no admissions page was found, returns the admissions page URL | `admissions_page_url` | Paid |
+| 5. Scan the admissions page | Clay's native website scrape on `admissions_page_url`. Needs the page's links, iframe `src` values and visible text. UNVERIFIED: whether the scrape returns iframe `src` values (and the full link list); test on one domain before the build. If it doesn't, embedded Google Forms need the Claygent fallback | Links, iframes, page text | Paid |
+| 6. Page asks | Clay Use AI column on the page text, JSON output (section 4) | R1, R2, R3 fields and evidence quotes | Paid |
+| 7. Recipient | Clay people search started from a view of the companies that passed steps 1 to 6, with the section 2 titles. **Fallback:** Apollo people search by domain, only for schools where Clay finds no one | `first_name`, title, LinkedIn URL | Free (Apollo fallback: paid) |
+| 8. Email | Clay waterfall: Prospeo, Icypeas, Leadmagic, Findymail; then Bounceban to verify (`knowledge-base/playbooks/clay/expert.md`). Runs only where `Ready to Contact?` is true | Verified email, verification status | Paid |
+
+Apollo company enrichment is no longer a source: Clay's company search returns name, size and industry.
 
 ## 4. Signals table [ENGINE]
 
-Reads run on the scanned admissions or registration pages unless stated. Keyword lists are INFERRED build settings, to tune on the 500-domain sample.
+Reads run on the scanned admissions or registration page unless stated. Keyword lists are INFERRED build settings, to tune on the sample.
 
-| # | Signal | Role | How it's read | Output |
+| # | Signal | Role | How it's read (Clay column type) | Output |
 |---|---|---|---|---|
-| T1 | Google Forms on the site | trigger | Boolean: domain is on the BuiltWith Google Forms list | `has_google_forms` |
-| T2 | Google Form on an admissions or registration page | trigger | Regex: a link matching `docs.google.com/forms` or `forms.gle`, **or an iframe whose `src` contains `docs.google.com/forms`**, on a page whose URL or title matches `admission\|admissions\|apply\|application\|enrol\|enroll\|enrollment\|registration\|register` | `gform_on_admissions`, `admissions_page_url` |
-| T3 | Page asks for documents or a payment | trigger | Boolean: R1 OR R2. Both false: the row drops | `asks_docs_or_payment` |
-| R1 | Documents requested | router | Keyword match on page text: `upload`, `attach`, `transcript`, `birth certificate`, `report card`, `immunization`, `proof of residency`, `email your documents`, `send copies` | `asks_documents` |
-| R2 | Payment requested | router | Keyword match: `application fee`, `registration fee`, `deposit`, `tuition deposit`, `proof of payment`, `pay by check`, `money order`, or a `$` amount within 50 characters of `fee` | `asks_payment` |
-| R3 | Paper or PDF form alongside the Google Form | router | Regex: a link ending `.pdf`, `.doc` or `.docx` whose anchor text or file name matches `application\|enrol\|enroll\|registration\|form`, OR page text matching `print and\|mail to\|drop off\|return to the office` | `has_paper_form` |
-| C1 | Which process the page is for | context-clause | Regex on URL and title, first match wins. Enum: `admissions`, `enrollment`, `registration`, `camp`, `other` | `process_type` |
-| C2 | School name | context-clause | Apollo company name; fallback: page title | `school_name` |
-| F1 | Segment fit | filter | Clay AI column, hard enum: `A-US`, `B`, `D`, `not_fit`, `other`. Only `A-US` continues (`B` continues in the B build) | `segment`, `not_fit_reason` |
-| X1 | Paid form builder on the same page | exclusion | Regex on embed domains: `jotform.com`, `typeform.com`, `formstack.com`, `wufoo.com`. True: the row drops | `has_paid_builder` |
+| T2 | Google Form on an admissions or registration page | trigger | Formula (regex) on the scrape output: a link matching `docs.google.com/forms` or `forms.gle`, **or an iframe whose `src` contains `docs.google.com/forms`** (UNVERIFIED, see section 3 step 5), on a page whose URL or title matches `admission\|admissions\|apply\|application\|enrol\|enroll\|enrollment\|registration\|register`. False: the row drops | `gform_on_admissions`, `admissions_page_url` |
+| P1 | Ask keywords on the page | filter (free pre-filter) | Formula: page text contains any keyword from the lists below. False: "Page asks" does not run and the row drops. Documents: `upload`, `attach`, `transcript`, `birth certificate`, `report card`, `immunization`, `proof of residency`, `email your documents`, `send copies`. Payment: `application fee`, `registration fee`, `deposit`, `tuition deposit`, `proof of payment`, `pay by check`, `money order`, or a `$` amount within 50 characters of `fee`. Paper: a link ending `.pdf`, `.doc` or `.docx`, or `print and`, `mail to`, `drop off`, `return to the office` | `has_ask_keywords` |
+| PA | Page asks | source of R1 to R3 | Use AI column, JSON output, run condition: T2 true AND P1 true AND F1 = `A-US` AND X1 false AND X2 false. Input: page text, link list (with anchor text) and `admissions_page_url`. Fields: `asks_documents`, `asks_payment`, `has_paper_form` (each `yes`, `no` or `unclear`), and `documents_evidence`, `payment_evidence`, `paper_evidence` (a word-for-word quote from the page, or empty). Prove on 2 or 3 pages you can judge before running the rest | JSON fields above |
+| R1 | Documents requested | router | Formula: `asks_documents` = `yes` | `asks_documents` |
+| R2 | Payment requested | router | Formula: `asks_payment` = `yes` | `asks_payment` |
+| R3 | Paper or PDF form alongside the Google Form | router | Formula: `has_paper_form` = `yes` | `has_paper_form` |
+| T3 | Page asks for documents or a payment | trigger | Formula: R1 OR R2. If `asks_documents` and `asks_payment` are both `no`, the row drops. If any of the three PA fields is `unclear`, the row goes to the **Review** view and `Ready to Contact?` stays false until a person sets the field | `asks_docs_or_payment`, `needs_review` |
+| C1 | Which process the page is for | context-clause | Formula (regex) on URL and title, first match wins. Enum: `admissions`, `enrollment`, `registration`, `camp`, `other` | `process_type` |
+| C2 | School name | context-clause | Clay company search name, cleaned of legal suffixes; fallback: page title | `school_name` |
+| F1 | Segment fit | filter | Use AI column, JSON output. Input: company name, domain, industry, size and description from the Clay company search. Fields: `segment` (hard enum: `A-US`, `B`, `D`, `not_fit`, `other`), `not_fit_reason`, `segment_evidence` (a word-for-word quote from the input). Only `A-US` continues (`B` continues in the B build); `other` goes to the Review view. Prove on 2 or 3 schools before running the rest | `segment`, `not_fit_reason`, `segment_evidence` |
+| X1 | Paid form builder on the same page | exclusion | Formula (regex) on link and iframe domains: `jotform.com`, `typeform.com`, `formstack.com`, `wufoo.com`. True: the row drops | `has_paid_builder` |
+| X2 | Customer or competitor | exclusion | Lookup on the Exclusions table, matched on domain. Found: the row drops | `is_excluded` |
+| G1 | Title rank | gate | Formula on the person's title, INFERRED order: 1 admissions or enrollment titles (admissions officer, director of admissions, enrollment manager), 2 registrar, 3 instructional technologist, 4 head of school or principal. Keep the lowest rank per domain; ties keep the first person found | `title_rank`, `is_top_contact` |
+| G2 | Ready to Contact? | gate | Formula: T2 AND T3 AND NOT `needs_review` AND F1 = `A-US` AND NOT X1 AND NOT X2 AND `is_top_contact`. Run condition for the email waterfall and every copy formula | `ready_to_contact` |
 
-- Count clusters: none. Every router is a boolean.
+- Count clusters: none. Every router is a yes/no read once Review rows are held back.
 - Routing axes: what the page asks for (R1, R2) and paper alongside (R3).
 - Context-clauses C1 and C2 never route.
 
 **Considered and left out**
+- T1, the BuiltWith Google Forms list (dropped 2026-11-15). It is not a Clay company search filter (Clay's company search accepts only domain, size and industry; `tools/rex/action-registry.md`), and the list counts every US website, not schools. T2 reads the Google Form on the page directly.
+- Keyword matches as the R1 and R2 reads (replaced 2026-11-15 by "Page asks"). They can't tell "upload your photo to the gallery" from a document request, or "no fee" from a payment. The keywords stay as the free pre-filter P1.
 - Whether the Google Form itself contains a file-upload question. It would directly support the "Google sign-in to upload" proof, but reading it from outside is not verified.
-- **Test on the 500-domain sample:** does fetching the Google Form URL redirect to a Google sign-in page? That would be a proxy for a file-upload question. It is not in v1, because sign-in can be required for other reasons.
+- **Test on the sample:** does fetching the Google Form URL redirect to a Google sign-in page? That would be a proxy for a file-upload question. It is not in v1, because sign-in can be required for other reasons.
 
 ## 5. Routing matrix with angles [ENGINE]
 
 - Axis 1, what the page asks for (R1, R2): 3 options: documents only, payment only, both. "Neither" is removed by T3.
 - Axis 2, paper alongside (R3): 2 options: yes, no.
 - Stacked: 3 x 2 = 6 cells.
+- "R1 true" means `asks_documents` = `yes` (likewise R2, R3). Rows with any `unclear` read are held in the Review view and never get a cell until a person sets the field.
 
-Branch coverage: every cell has `school_name`, `process_type` and `admissions_page_url`. No cell has a fee amount, a document list or a deadline, so no angle depends on one.
+Branch coverage: every cell has `school_name`, `process_type` and `admissions_page_url`. No cell has a fee amount, a document list or a deadline, so no angle depends on one. The evidence quotes are for QA only and never appear in copy.
 
 | Cell | Deterministic read | What it tells us (inferred situation) | The angle it earns |
 |---|---|---|---|
@@ -114,15 +132,15 @@ Branch coverage: every cell has `school_name`, `process_type` and `admissions_pa
 
 ## 6. Variables contract [ENGINE]
 
-Copy may only use these variables. Syntax: `{{snake_case}}`; match Instantly's syntax at export.
+Copy may only use these variables. Syntax: `{{snake_case}}`; match Instantly's syntax at export. Checked 2026-11-15: every variable the copy below uses has a source in this table.
 
 | Variable | Source field | Exists in branches |
 |---|---|---|
-| `{{first_name}}` | Apollo people search, first name | All cells |
-| `{{school_name}}` | C2: Apollo company name, fallback page title | All cells |
+| `{{first_name}}` | Clay people search, first name (Apollo people search fallback) | All cells |
+| `{{school_name}}` | C2: Clay company search name, cleaned; fallback page title | All cells |
 | `{{process_type}}` | C1 enum: admissions, enrollment, registration, camp, other. Copy must handle `other` with a neutral fallback | All cells |
-| `{{admissions_page_url}}` | T2 page URL | All cells. For reference and QA; copy should name the page type, not paste the URL |
-| `{{route_cell}}` | Formula on R1, R2, R3: values 1 to 6 | All cells. Routing key only; never shown in copy |
+| `{{admissions_page_url}}` | T2 page URL (section 3 step 4) | All cells. For reference and QA; copy should name the page type, not paste the URL |
+| `{{route_cell}}` | Formula on R1, R2, R3 (read from "Page asks"): values 1 to 6 | All cells. Routing key only; never shown in copy |
 | `{{proof_customer}}` | Lookup on `route_cell`: COTSA (1, 5), Polk State (2, 6), Pennsylvania Academy of Ballet (3, 4) | All cells |
 | `{{proof_support}}` | Lookup on `route_cell`: Ruby's Place (3, 4); empty in 1, 2, 5, 6 | Cells 3 and 4 only. Copy must not reference it elsewhere |
 | `{{sender_name}}` | Instantly sender profile | All cells |
@@ -137,15 +155,17 @@ Copy may only use these variables. Syntax: `{{snake_case}}`; match Instantly's s
 | `{{e3l1}}` | Copy tag: Email 3 line 1, resolved in Clay from `proof_customer` (3 variants) | All cells |
 | `{{li_dm1}}` | Copy tag: LinkedIn DM 1, resolved in Clay from R1 and R2 (3 variants) | All cells with a LinkedIn profile URL |
 
+Every copy-tag formula starts with the `Ready to Contact?` guard (G2), so rows that won't be contacted stay blank. Table-only columns that never appear in copy: `ready_to_contact`, `needs_review`, `title_rank`, the evidence quotes, `segment`.
+
 Not available in any branch, so copy can never say it: fee amount, document list, deadline, number of applicants, enrollment size, current tool other than Google Forms and paper.
 
 ## 7. Cadence and channel [ENGINE]
 
 | Item | Setting | Source |
 |---|---|---|
-| Periodicity | Always-on. Monthly BuiltWith pull for new US sites; weekly page scan of new rows only | gtm-system.md step 1 (PLAYBOOK: tech adoption monthly) |
-| Before launch | Run the 500-domain sample: measure how many pass T1 to T3 and F1, the cell spread, and the sign-in redirect test | workflow-candidates.md |
-| Re-entry | Suppressed for 90 days after the sequence ends; re-enters only on a new signal | gtm-system.md step 2 |
+| Periodicity | Always-on. Monthly re-run of the Clay company search, adding new US schools only; weekly page scan of new rows only | gtm-system.md step 1 (cadence INFERRED for an account-first list) |
+| Before launch | Run the sample: record the search preview count, how many pass each of X2, F1, T2, P1, T3 and the Review view, the cell spread, and the sign-in redirect test. Test the iframe `src` question on one domain first | workflow-candidates.md |
+| Re-entry | Suppressed for 90 days after the sequence ends; re-enters only on a new signal. Enforced from Week 3, when HubSpot is connected | gtm-system.md step 2 |
 | Channel | Both. Email in Instantly for every verified contact. LinkedIn if a profile URL exists | gtm-system.md steps 7 and 8 |
 | Email | Day 0, Day 3 to 4, Day 7 to 10, optional Day 14+ | knowledge-base/playbooks/copy-frameworks.md |
 | LinkedIn | Connection request Day 1 to 2 with no note; DM 1 one to two days after accept; DM 2 three to five days later; no DM 3; max 20 to 30 requests per account per day | knowledge-base/playbooks/linkedin-dm-frameworks.md |
@@ -162,15 +182,18 @@ Not available in any branch, so copy can never say it: fee amount, document list
 - [x] Inclusion: ICP box + trigger definition + recipient, tagged [ICP]
 - [x] Exclusion: who's out and why
 - [x] Sources: trigger + every enrichment
-- [x] Signals table: every read deterministic, every role declared
+- [x] Signals table: every read declared with its Clay column type (formula, lookup, scrape or Use AI with JSON and evidence), every role declared
 - [x] Count clusters declared for any count that routes (none: all booleans)
 - [x] Routing matrix with the angle column complete
 - [x] Branch coverage: every angle survives on the data in its cell
 - [x] Variables contract: every variable mapped to its source field
 - [x] Engine/ICP markers on every section
 - [x] Cadence and channel declared
+- [x] Clay sources and signals revised (2026-11-15): every signal read by a Clay search filter, lookup, scrape, Use AI column or formula
 
-Next: `/campaign-copy` reads this file (GATE 1) and turns the six approved angles into copy.
+Open before the build: test whether Clay's website scrape returns iframe `src` values (one domain); confirm the industry values in Clay's search picker; record the search preview count.
+
+Next: `/clay-build-plan` turns this spec into the step-by-step Clay build guide (Week 2 step 2). Copy is done (COPY-APPROVED 2026-11-13).
 
 
 ---
