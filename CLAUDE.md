@@ -60,6 +60,7 @@ From the GTM starter kit (`.claude/skills/`). Method docs they read are in `know
 
 - Research to copy, in order: `campaign-strategy`, `signal-matrix`, `build-workflow-spec`, `campaign-copy`. Visual map: `miro-gtm-flowchart`.
 - Clay builds: `build-clay`, `prompt-builder`, `campaign-contract`, `design-clay-table-json`, `import-clay-table`, `save-clay-schema`.
+- Clay build guides: `clay-build-plan` turns an approved workflow spec into a step-by-step Clay build guide (Markdown) plus a swimlane flow diagram (PNG). Writes instructions only; it never touches Clay (that is `build-clay`). Its renderer needs Chrome and `pip install selenium`.
 - Clay costs and data: `calculate-costs`, `workspace-cost-audit`, `export-tables`. Pre-launch checks: `campaign-qa`.
 - Research and deliverability: `crawl4ai`, `agent-browser`, `inbox-placement-test`.
 
