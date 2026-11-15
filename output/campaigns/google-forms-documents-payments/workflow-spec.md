@@ -4,6 +4,8 @@
 
 **Revised 2026-11-15:** sources and signals revised for Clay. Account-first from Clay's company search; T1 (BuiltWith list) dropped, T2 is the trigger; page reads from Clay's website scrape with a Claygent fallback; R1 to R3 read by one Use AI column ("Page asks"); Exclusions table and `Ready to Contact?` gate added. Copy unchanged; every copy variable still has a source (section 6).
 
+**Decisions 2026-11-15 (after the Clay build plan):** K-12 schools only; Email 3 line 1 uses `proof_support` where it exists, otherwise `proof_customer`; email is the only channel built this week (LinkedIn out of scope); G1 drops titles containing "assistant"; a Claygent-found admissions page must match the T2 page keywords; the first test leaves out the `11-50` band on purpose. Build guide: [clay-build/w1-google-forms-clay-build-guide.md](clay-build/w1-google-forms-clay-build-guide.md).
+
 - Workflow: W1 in [context/icp/signal-matrix.md](../../../context/icp/signal-matrix.md) (signals S2 + S3). System steps: [context/docs/gtm-system.md](../../../context/docs/gtm-system.md).
 - Segment: A-US schools (first build). Segment B nonprofits reuses the same build; swaps are marked **B reuse**.
 - Facts: copy facts come from [context/messaging/facts.md](../../../context/messaging/facts.md) (APPROVED 2026-11-13), which draws on `context/docs/research/` (checked 2026-11-13). Anything else is a `{{placeholder}}`.
@@ -26,7 +28,7 @@
 | Box | Rule | Source |
 |---|---|---|
 | Geography | United States, headquarters in the US (Clay company search location filter, headquarters only) | icp.md, A-US |
-| Industry | Clay industry "Primary and Secondary Education" (the value in Clay's search picker, confirmed 2026-11-15). Target: charter, private, independent and Catholic K-12 schools | icp.md, A-US target definition; Clay picker checked 2026-11-15 |
+| Industry | Clay industry "Primary and Secondary Education" (the value in Clay's search picker, confirmed 2026-11-15). Target: charter, private, independent and Catholic K-12 schools only (decided 2026-11-15). Arts schools, student associations and training consortia are out of this build: F1 returns `not_fit` for them. Later test: whether to add them back | icp.md, A-US target definition; Clay picker checked 2026-11-15 |
 | Description | Company description contains any of: `private school`, `charter school`, `independent school`, `day school`, `academy`, `Catholic school`, `Montessori`, `admissions`. Without it the results mix in edtech companies, education nonprofits and state education departments | Clay Find Companies preview, 2026-11-15 |
 | Size | Clay company size bands `11-50`, `51-200` and `201-500` only. Schools with no size listed drop out (accepted 2026-11-15). INFERRED cap, to tune on the sample | icp.md (segment sizes Not found); Clay size bands (`tools/rex/action-registry.md`) |
 | Volume | About 5K companies with every filter above: `11-50` about 2.6K, `51-200` about 2K, `201-500` 356. 24.6K before the description filter. With it, `51-200` and `201-500` are almost all private, Catholic and independent schools; `11-50` still includes some public high schools, a think tank and a camp provider, which F1 must drop. Pass rates at each later step: unknown until the sample | Clay Find Companies preview (free), 2026-11-15 |
@@ -68,7 +70,7 @@ Build order: free before paid, and every paid step runs only on rows that passed
 | 1. Company universe | Clay company search (Find Companies): headquarters United States, industry "Primary and Secondary Education", size bands `11-50`, `51-200`, `201-500`, and the section 2 description filter. Preview count about 5K (section 2) | Company name, domain, size, industry, description, LinkedIn URL | Free |
 | 2. Exclusions | Lookup on the Exclusions table, matched on domain (X2) | `is_excluded` | Free |
 | 3. Segment check | Clay Use AI column, JSON output (F1) | `segment`, `not_fit_reason`, `segment_evidence` | Paid |
-| 4. Find the admissions page | Clay's native website scrape on the homepage (likely labelled "Scrape Website"; if not, search Clay's enrichments for "scrape"). A formula keeps the first link whose URL or link text matches the T2 page keywords. **Fallback:** Claygent, only on rows where no admissions page was found, returns the admissions page URL | `admissions_page_url` | Paid |
+| 4. Find the admissions page | Clay's native website scrape on the homepage (likely labelled "Scrape Website"; if not, search Clay's enrichments for "scrape"). A formula keeps the first link whose URL or link text matches the T2 page keywords. **Fallback:** Claygent, only on rows where no admissions page was found, returns the admissions page URL. A Claygent-found page counts only if its URL or title matches the T2 page keywords (decided 2026-11-15) | `admissions_page_url` | Paid |
 | 5. Scan the admissions page | Clay's native website scrape on `admissions_page_url`. Needs the page's links, iframe `src` values and visible text. UNVERIFIED: whether the scrape returns iframe `src` values (and the full link list). Proven on 1 row of the Schools table when this column is built; Claygent is the backup for embedded forms | Links, iframes, page text | Paid |
 | 6. Page asks | Clay Use AI column on the page text, JSON output (section 4) | R1, R2, R3 fields and evidence quotes | Paid |
 | 7. Recipient | Clay people search started from a view of the companies that passed steps 1 to 6, with the section 2 titles. **Fallback:** Apollo people search by domain, only for schools where Clay finds no one | `first_name`, title, LinkedIn URL | Free (Apollo fallback: paid) |
@@ -91,10 +93,10 @@ Reads run on the scanned admissions or registration page unless stated. Keyword 
 | T3 | Page asks for documents or a payment | trigger | Formula: R1 OR R2. If `asks_documents` and `asks_payment` are both `no`, the row drops. If any of the three PA fields is `unclear`, the row goes to the **Review** view and `Ready to Contact?` stays false until a person sets the field | `asks_docs_or_payment`, `needs_review` |
 | C1 | Which process the page is for | context-clause | Formula (regex) on URL and title, first match wins. Enum: `admissions`, `enrollment`, `registration`, `camp`, `other` | `process_type` |
 | C2 | School name | context-clause | Clay company search name, cleaned of legal suffixes; fallback: page title | `school_name` |
-| F1 | Segment fit | filter | Use AI column, JSON output. Input: company name, domain, industry, size and description from the Clay company search. Fields: `segment` (hard enum: `A-US`, `B`, `D`, `not_fit`, `other`), `not_fit_reason`, `segment_evidence` (a word-for-word quote from the input). Only `A-US` continues (`B` continues in the B build); `other` goes to the Review view. Must return `not_fit` for the non-schools the search lets through: public high schools, think tanks and camp providers (seen in the `11-50` band, 2026-11-15). Prove on 2 or 3 schools before running the rest | `segment`, `not_fit_reason`, `segment_evidence` |
+| F1 | Segment fit | filter | Use AI column, JSON output. Input: company name, domain, industry, size and description from the Clay company search. Fields: `segment` (hard enum: `A-US`, `B`, `D`, `not_fit`, `other`), `not_fit_reason`, `segment_evidence` (a word-for-word quote from the input). Only `A-US` continues (`B` continues in the B build); `other` goes to the Review view. Must return `not_fit` for the non-schools the search lets through: public high schools, think tanks and camp providers (seen in the `11-50` band, 2026-11-15), and for arts schools, student associations and training consortia (K-12 only, decided 2026-11-15). Prove on 2 or 3 schools before running the rest | `segment`, `not_fit_reason`, `segment_evidence` |
 | X1 | Paid form builder on the same page | exclusion | Formula (regex) on link and iframe domains: `jotform.com`, `typeform.com`, `formstack.com`, `wufoo.com`. True: the row drops | `has_paid_builder` |
 | X2 | Customer or competitor | exclusion | Lookup on the Exclusions table, matched on domain. Found: the row drops | `is_excluded` |
-| G1 | Title rank | gate | Formula on the person's title, INFERRED order: 1 admissions or enrollment titles (admissions officer, director of admissions, enrollment manager), 2 registrar, 3 instructional technologist, 4 head of school or principal. Keep the lowest rank per domain; ties keep the first person found | `title_rank`, `is_top_contact` |
+| G1 | Title rank | gate | Formula on the person's title, INFERRED order: 1 admissions or enrollment titles (admissions officer, director of admissions, enrollment manager), 2 registrar, 3 instructional technologist, 4 head of school or principal. Any title containing "assistant" gets no rank (decided 2026-11-15). Keep the lowest rank per domain; ties keep the first person found | `title_rank`, `is_top_contact` |
 | G2 | Ready to Contact? | gate | Formula: T2 AND T3 AND NOT `needs_review` AND F1 = `A-US` AND NOT X1 AND NOT X2 AND `is_top_contact`. Run condition for the email waterfall and every copy formula | `ready_to_contact` |
 
 - Count clusters: none. Every router is a yes/no read once Review rows are held back.
@@ -152,9 +154,9 @@ Copy may only use these variables. Syntax: `{{snake_case}}`; match Instantly's s
 | `{{e1l3}}` | Copy tag: Email 1 value prop, resolved in Clay from R1 and R2 (3 variants; A live, B test) | All cells (added 2026-11-13, owner-approved) |
 | `{{social_proof}}` | Copy tag: proof line, resolved in Clay from `proof_customer` (3 variants) | All cells |
 | `{{e2l1}}` | Copy tag: Email 2 line 1, resolved in Clay from R1 and R2 (3 variants) | All cells |
-| `{{e2l2}}` | Copy tag: Email 2 line 2, from `proof_support` (Ruby's Place) | Cells 3 and 4 only; empty elsewhere, and the line is omitted |
-| `{{e3l1}}` | Copy tag: Email 3 line 1, resolved in Clay from `proof_customer` (3 variants) | All cells |
-| `{{li_dm1}}` | Copy tag: LinkedIn DM 1, resolved in Clay from R1 and R2 (3 variants) | All cells with a LinkedIn profile URL |
+| `{{e2l2}}` | Copy tag: Email 2 line 2, from `proof_support` (Ruby's Place) | Cells 3 and 4 only; empty elsewhere, and the line is omitted: the Clay formula ends the line with two line breaks and the Instantly template puts `{{e2l2}}` directly before the next line, so an empty value leaves no blank line |
+| `{{e3l1}}` | Copy tag: Email 3 line 1, resolved in Clay from `proof_support` where it exists, otherwise `proof_customer` (3 variants: COTSA cells 1 and 5, Polk State cells 2 and 6, Ruby's Place cells 3 and 4) | All cells |
+| `{{li_dm1}}` | Copy tag: LinkedIn DM 1, resolved in Clay from R1 and R2 (3 variants) | All cells with a LinkedIn profile URL. Not built in 2026-W47: LinkedIn is out of scope until a LinkedIn tool is chosen |
 
 Every copy-tag formula starts with the `Ready to Contact?` guard (G2), so rows that won't be contacted stay blank. Table-only columns that never appear in copy: `ready_to_contact`, `needs_review`, `title_rank`, the evidence quotes, `segment`.
 
@@ -165,12 +167,12 @@ Not available in any branch, so copy can never say it: fee amount, document list
 | Item | Setting | Source |
 |---|---|---|
 | Periodicity | Always-on. Monthly re-run of the Clay company search, adding new US schools only; weekly page scan of new rows only | gtm-system.md step 1 (cadence INFERRED for an account-first list) |
-| Before launch | Run the sample: record the search preview count, how many pass each of X2, F1, T2, P1, T3 and the Review view, the cell spread, and the sign-in redirect test. Prove the scrape, including iframe `src` values, on 1 row of the Schools table first | workflow-candidates.md |
+| Before launch | Run the sample: record the search preview count, how many pass each of X2, F1, T2, P1, T3 and the Review view, the cell spread, and the sign-in redirect test. Prove the scrape, including iframe `src` values, on 1 row of the Schools table first. The first test (50 schools) uses only the `51-200` and `201-500` bands, on purpose. Next test: the `11-50` band, where F1 must drop public high schools, think tanks and camp providers | workflow-candidates.md |
 | Re-entry | Suppressed for 90 days after the sequence ends; re-enters only on a new signal. Enforced from Week 3, when HubSpot is connected | gtm-system.md step 2 |
-| Channel | Both. Email in Instantly for every verified contact. LinkedIn if a profile URL exists | gtm-system.md steps 7 and 8 |
+| Channel | Email only in 2026-W47: Instantly for every verified contact. LinkedIn (connection request and DMs) stays in the spec but is out of scope until a LinkedIn tool is chosen; none is in the GTM stack | gtm-system.md steps 7 and 8 |
 | Email | Day 0, Day 3 to 4, Day 7 to 10, optional Day 14+ | knowledge-base/playbooks/copy-frameworks.md |
 | LinkedIn | Connection request Day 1 to 2 with no note; DM 1 one to two days after accept; DM 2 three to five days later; no DM 3; max 20 to 30 requests per account per day | knowledge-base/playbooks/linkedin-dm-frameworks.md |
-| Catch-all or no email | LinkedIn only if a profile exists; otherwise drop | gtm-system.md step 7 |
+| Catch-all or no email | LinkedIn only if a profile exists; otherwise drop. In 2026-W47 (email only): drop | gtm-system.md step 7 |
 | Positive reply | Default path: call (A-US). Trial link only if the reply asks for it | gtm-system.md step 9 |
 | Launch gate | `campaign-qa` passed and owner approval before any send | CLAUDE.md rule; gtm-system.md step 8 |
 | Timing | US admissions calendar: Not found in research. No seasonal timing in v1 | market.md |
@@ -335,7 +337,7 @@ Day 7 to 10, same thread, subject `Re:` Email 1's subject.
 {{sender_name}}
 ```
 
-#### Line 1 `{{e3l1}}` (exhaustive on `proof_customer`, no fallback)
+#### Line 1 `{{e3l1}}` (exhaustive on `proof_support` where it exists, otherwise `proof_customer`; no fallback)
 
 + COTSA (cells 1, 5): One last example: COTSA now takes entries from "more than 2,000 participants" and calls the process "all digital".
 + POLK STATE (cells 2, 6): One last note: Polk State College Charter Schools says Formplus "decreased our time and cost ten times over".
@@ -354,6 +356,8 @@ Word counts (greeting to CTA): cells 1, 5: 33; cells 2, 6: 31; cells 3, 4: 42.
 > {{sender_name}}
 
 ### LinkedIn (approved 2026-11-13)
+
+Out of scope in 2026-W47: no LinkedIn tool in the stack. Kept here for when one is chosen.
 
 Only for contacts with a LinkedIn profile URL. Reply on either channel pauses the other.
 
